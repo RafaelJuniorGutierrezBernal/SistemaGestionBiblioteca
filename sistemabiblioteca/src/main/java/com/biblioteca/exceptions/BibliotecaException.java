@@ -18,4 +18,11 @@ public class BibliotecaException {
             super(mensaje);
         }
     }
+
+    // HU-01: se intenta devolver un libro que no está prestado
+    public static class LibroNoPrestadoException extends RuntimeException {
+        public LibroNoPrestadoException(String mensaje) {
+            super(mensaje);
+        }
+    }
 }
