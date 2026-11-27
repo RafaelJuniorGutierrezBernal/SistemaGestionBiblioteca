@@ -224,4 +224,44 @@ class BibliotecaServiceTest {
         verify(usuarioRepository, times(1)).buscarPorId(idUsuario);
         verify(prestamoRepository, never()).buscarPorUsuario(anyString());
     }
+
+    // ---------- HU-01: Devolver un libro ----------
+
+    @Test
+    void devolverLibro_LibroPrestado_DebeRegistrarDevolucion() {
+        Libro libro = new Libro("1", "El Principito", "Antoine de Saint-Exupéry");
+        libro.setPrestado(true);
+        Prestamo prestamo = new Prestamo("10", "1", "1", LocalDate.now().minusDays(3));
+
+        when(libroRepository.buscarPorId("1")).thenReturn(Optional.of(libro));
+        when(prestamoRepository.buscarPrestamoActivoPorLibro("1")).thenReturn(Optional.of(prestamo));
+
+        Prestamo resultado = bibliotecaService.devolverLibro("1");
+
+        assertEquals(LocalDate.now(), resultado.getFechaDevolucion());
+        assertFalse(resultado.isActivo());
+        assertFalse(libro.isPrestado());
+        verify(libroRepository, times(1)).actualizarLibro(libro);
+        verify(prestamoRepository, times(1)).guardarPrestamo(prestamo);
+    }
+
+    @Test
+    void devolverLibro_LibroNoPrestado_DebeLanzarExcepcion() {
+        Libro libro = new Libro("1", "El Principito", "Antoine de Saint-Exupéry");
+        when(libroRepository.buscarPorId("1")).thenReturn(Optional.of(libro));
+
+        assertThrows(BibliotecaException.LibroNoPrestadoException.class, () -> {
+            bibliotecaService.devolverLibro("1");
+        });
+        verify(libroRepository, never()).actualizarLibro(any(Libro.class));
+    }
+
+    @Test
+    void devolverLibro_LibroNoExistente_DebeLanzarExcepcion() {
+        when(libroRepository.buscarPorId("999")).thenReturn(Optional.empty());
+
+        assertThrows(BibliotecaException.LibroNoEncontradoException.class, () -> {
+            bibliotecaService.devolverLibro("999");
+        });
+    }
 }
