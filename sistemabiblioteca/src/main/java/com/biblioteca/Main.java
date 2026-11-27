@@ -23,10 +23,10 @@ public class Main {
         LibroRepository libroRepository = new LibroRepositoryImpl();
         UsuarioRepository usuarioRepository = new UsuarioRepositoryImpl();
         PrestamoRepository prestamoRepository = new PrestamoRepositoryImpl();
-        
+
         // Inicializar servicio
         bibliotecaService = new BibliotecaService(libroRepository, usuarioRepository, prestamoRepository);
-        
+
         // Menú principal
         boolean salir = false;
         while (!salir) {
@@ -36,12 +36,14 @@ public class Main {
             System.out.println("3. Registrar un usuario");
             System.out.println("4. Prestar un libro");
             System.out.println("5. Consultar préstamos por usuario");
+            // HU-01: Mostrar la nueva opción en el menú principal
+            System.out.println("6. Devolver un libro");
             System.out.println("0. Salir");
             System.out.print("Seleccione una opción: ");
-            
+
             try {
                 int opcion = Integer.parseInt(scanner.nextLine());
-                
+
                 switch (opcion) {
                     case 1:
                         agregarLibro();
@@ -58,6 +60,10 @@ public class Main {
                     case 5:
                         consultarPrestamosPorUsuario();
                         break;
+                    // HU-01: Mostrar la nueva opción en el menú principal
+                    case 6:
+                        devolverLibro();
+                        break;
                     case 0:
                         salir = true;
                         System.out.println("¡Gracias por usar el Sistema de Gestión de Biblioteca!");
@@ -71,7 +77,7 @@ public class Main {
                 System.out.println("Error: " + e.getMessage());
             }
         }
-        
+
         scanner.close();
     }
 
@@ -87,7 +93,7 @@ public class Main {
         if (autor == null || autor.isEmpty()) {
             System.out.println("El título del libro es obligatorio.");
         }
-        
+
         try {
             Libro libro = bibliotecaService.agregarLibro(titulo, autor);
             System.out.println("Libro agregado correctamente: " + libro);
@@ -101,12 +107,12 @@ public class Main {
         System.out.println("\n-- BUSCAR LIBRO --");
         System.out.print("Ingrese el ID del libro: ");
         String idLibro = scanner.nextLine();
-        
+
         if (idLibro == null || idLibro.isEmpty()) {
             System.out.println("El ID del libro no puede ser nulo.");
-            
+
         }
-        
+
         try {
             Libro libro = bibliotecaService.buscarLibroPorId(idLibro);
             System.out.println("Libro encontrado: " + libro);
@@ -121,7 +127,7 @@ public class Main {
         System.out.println("\n-- REGISTRAR USUARIO --");
         System.out.print("Ingrese el nombre del usuario: ");
         String nombre = scanner.nextLine();
-        
+
         try {
             Usuario usuario = bibliotecaService.registrarUsuario(nombre);
             System.out.println("Usuario registrado correctamente: " + usuario);
@@ -137,7 +143,7 @@ public class Main {
         String idLibro = scanner.nextLine();
         System.out.print("Ingrese el ID del usuario: ");
         String idUsuario = scanner.nextLine();
-        
+
         try {
             Prestamo prestamo = bibliotecaService.prestarLibro(idLibro, idUsuario);
             System.out.println("Préstamo realizado correctamente: " + prestamo);
@@ -147,14 +153,28 @@ public class Main {
         }
     }
 
+    // HU-01
+    private static void devolverLibro() {
+        System.out.println("\n-- DEVOLVER LIBRO --");
+        System.out.print("Ingrese el ID del libro: ");
+        String idLibro = scanner.nextLine();
+
+        try {
+            Prestamo prestamo = bibliotecaService.devolverLibro(idLibro);
+            System.out.println("Devolución registrada correctamente: " + prestamo);
+        } catch (Exception e) {
+            System.out.println("Error al devolver el libro: " + e.getMessage());
+        }
+    }
+
     private static void consultarPrestamosPorUsuario() {
         System.out.println("\n-- CONSULTAR PRÉSTAMOS POR USUARIO --");
         System.out.print("Ingrese el ID del usuario: ");
         String idUsuario = scanner.nextLine();
-        
+
         try {
             List<Prestamo> prestamos = bibliotecaService.buscarPrestamosPorUsuario(idUsuario);
-            
+
             if (prestamos.isEmpty()) {
                 System.out.println("El usuario no tiene préstamos registrados.");
             } else {

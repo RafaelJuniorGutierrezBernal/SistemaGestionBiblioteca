@@ -7,6 +7,8 @@ public class Prestamo {
     private String idLibro;
     private String idUsuario;
     private LocalDate fechaPrestamo;
+    // HU-01: fecha en que se devolvió el libro (null mientras el préstamo esté activo)
+    private LocalDate fechaDevolucion;
 
     public Prestamo(String id, String idLibro, String idUsuario, LocalDate fechaPrestamo) {
         this.id = id;
@@ -48,6 +50,18 @@ public class Prestamo {
         this.fechaPrestamo = fechaPrestamo;
     }
 
+    public LocalDate getFechaDevolucion() {
+        return fechaDevolucion;
+    }
+
+    public void setFechaDevolucion(LocalDate fechaDevolucion) {
+        this.fechaDevolucion = fechaDevolucion;
+    }
+
+    public boolean isActivo() {
+        return fechaDevolucion == null;
+    }
+
     @Override
     public String toString() {
         return "Prestamo{" +
@@ -55,6 +69,7 @@ public class Prestamo {
                 ", idLibro='" + idLibro + '\'' +
                 ", idUsuario='" + idUsuario + '\'' +
                 ", fechaPrestamo=" + fechaPrestamo +
-                '}';
+                ", fechaDevolucion=" + (fechaDevolucion == null ? "pendiente" : fechaDevolucion) +
+                "}";
     }
 }

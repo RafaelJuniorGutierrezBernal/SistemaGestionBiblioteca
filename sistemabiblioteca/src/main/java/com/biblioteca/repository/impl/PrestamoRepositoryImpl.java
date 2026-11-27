@@ -30,4 +30,12 @@ public class PrestamoRepositoryImpl implements PrestamoRepository {
                 .filter(prestamo -> prestamo.getIdLibro().equals(idLibro))
                 .findFirst();
     }
+
+    // HU-01
+    @Override
+    public Optional<Prestamo> buscarPrestamoActivoPorLibro(String idLibro) {
+        return prestamos.values().stream()
+                .filter(prestamo -> prestamo.getIdLibro().equals(idLibro) && prestamo.isActivo())
+                .findFirst();
+    }
 }

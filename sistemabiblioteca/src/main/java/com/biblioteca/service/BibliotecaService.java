@@ -109,4 +109,31 @@ public class BibliotecaService {
         
         return prestamoRepository.buscarPorUsuario(idUsuario);
     }
+
+    /**
+     * HU-01: registra la devolución de un libro prestado.
+     *
+     * @param idLibro ID del libro que se devuelve
+     * @return Préstamo cerrado con su fecha de devolución
+     * @throws BibliotecaException.LibroNoEncontradoException si no se encuentra el libro
+     * @throws BibliotecaException.LibroNoPrestadoException si el libro no está prestado
+     */
+    public Prestamo devolverLibro(String idLibro) {
+        Libro libro = buscarLibroPorId(idLibro);
+
+        if (!libro.isPrestado()) {
+            throw new BibliotecaException.LibroNoPrestadoException("El libro con ID: " + idLibro + " no está prestado");
+        }
+
+        Prestamo prestamo = prestamoRepository.buscarPrestamoActivoPorLibro(idLibro)
+                .orElseThrow(() -> new BibliotecaException.LibroNoPrestadoException(
+                        "No hay un préstamo activo para el libro con ID: " + idLibro));
+
+        prestamo.setFechaDevolucion(LocalDate.now());
+        prestamoRepository.guardarPrestamo(prestamo);
+
+        libro.setPrestado(false);
+        libroRepository.actualizarLibro(libro);
+        return prestamo;
+    }
 }
