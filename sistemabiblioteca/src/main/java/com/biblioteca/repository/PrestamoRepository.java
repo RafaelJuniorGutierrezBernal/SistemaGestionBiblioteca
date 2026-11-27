@@ -9,4 +9,7 @@ public interface PrestamoRepository {
     Prestamo guardarPrestamo(Prestamo prestamo);
     List<Prestamo> buscarPorUsuario(String idUsuario);
     Optional<Prestamo> buscarLibroPrestado(String idLibro);
+
+    // HU-01
+    Optional<Prestamo> buscarPrestamoActivoPorLibro(String idLibro);
 }
