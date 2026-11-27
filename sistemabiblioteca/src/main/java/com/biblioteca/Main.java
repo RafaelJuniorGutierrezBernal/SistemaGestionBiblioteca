@@ -36,6 +36,7 @@ public class Main {
             System.out.println("3. Registrar un usuario");
             System.out.println("4. Prestar un libro");
             System.out.println("5. Consultar préstamos por usuario");
+            System.out.println("6. Devolver un libro");
             System.out.println("0. Salir");
             System.out.print("Seleccione una opción: ");
             
@@ -57,6 +58,9 @@ public class Main {
                         break;
                     case 5:
                         consultarPrestamosPorUsuario();
+                        break;
+                    case 6:
+                        devolverLibro();
                         break;
                     case 0:
                         salir = true;
@@ -144,6 +148,20 @@ public class Main {
             System.out.println("Fecha de préstamo: " + prestamo.getFechaPrestamo());
         } catch (Exception e) {
             System.out.println("Error al realizar el préstamo: " + e.getMessage());
+        }
+    }
+
+    // HU-01
+    private static void devolverLibro() {
+        System.out.println("\n-- DEVOLVER LIBRO --");
+        System.out.print("Ingrese el ID del libro: ");
+        String idLibro = scanner.nextLine();
+
+        try {
+            Prestamo prestamo = bibliotecaService.devolverLibro(idLibro);
+            System.out.println("Devolución registrada correctamente: " + prestamo);
+        } catch (Exception e) {
+            System.out.println("Error al devolver el libro: " + e.getMessage());
         }
     }
 
